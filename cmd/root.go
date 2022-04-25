@@ -55,12 +55,6 @@ func init() {
                  
 Available Flags:
                  kop [<command>] -h     help about any command
-
-Example Usage:
-                $ kop ac
-                cmd: nmap ${IP}
-                $ kop av IP 10.10.10.10
-                $ kop sc nmap
                 `)
     return nil
   })
