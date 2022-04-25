@@ -32,9 +32,9 @@ go install github.com/0xsuk/kop@latest
 ```
 
 # Usage
-Add a commands by `kop ac`. Use variable notation ${VARIABLE_NAME} to represent variables. The command will be added to ~/.kopcmd.json.   
-Add a variable by `kop av <variable> <value>`. The variable will be added to ~/.kopvar.json.    
-Copy a command by `kop cc <index>`. If the command contains variables found in ~/.kopvar.json, kop replace variables with its values.    
+- Add commands by `kop ac`. Use variable notation ${VARIABLE_NAME} to represent variables. The command will be added to ~/.kopcmd.json.  
+- Add variables by `kop av <variable> <value>`. The variable will be added to ~/.kopvar.json.  
+- Copy commands by `kop cc <index>`. If the command contains variables found in ~/.kopvar.json, kop replace variables with its values.  
 
 
 ```
