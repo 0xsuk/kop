@@ -35,13 +35,13 @@ var addcmd = &cobra.Command{
 				log.Fatal("cannot add empty command")
 			}
 		}
-		fmt.Printf("Adding Command: %+v\n", newcommand)
+		//fmt.Printf("Adding Command: %+v\n", newcommand)
 		commands.Cmd = append(commands.Cmd, newcommand)
 
 		err = WriteCommands(commands)
 		CheckErr(err)
 
-		fmt.Printf("[+] Successfully Added\n")
+		fmt.Printf("[+] Added\n")
 	},
 }
 
@@ -109,7 +109,7 @@ var removecmd = &cobra.Command{
 
 		err = WriteCommands(new_commands)
 		CheckErr(err)
-		fmt.Printf("[+] Successfully Removed: %+v\n", removed_cmd)
+		fmt.Printf("[+] Removed: %+v\n", removed_cmd)
 	},
 }
 

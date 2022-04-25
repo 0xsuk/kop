@@ -87,17 +87,16 @@ var addvar = &cobra.Command{
 		err = WriteMap(varmap, varFile_path)
 		CheckErr(err)
 
-		fmt.Println("[+] Successfully Added")
+		fmt.Println("[+] Added")
 	},
 }
 
-//resetvar resests varFile_path
 var removevar = &cobra.Command{
 	Use:   "rv <variable>...",
 	Short: "remove variables. If no <variable> provided, remove all variables",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Printf("Are you sure you want to reset all variables?[Y/n]")
+			fmt.Printf("Are you sure you want to remove all variables?[Y/n]")
 			scanner := bufio.NewScanner(os.Stdin)
 			if scanner.Scan() {
 				if scanner.Text() == "n" {
@@ -105,14 +104,14 @@ var removevar = &cobra.Command{
 					return
 				}
 				if scanner.Text() != "Y" && scanner.Text() != "" {
-					fmt.Println("[*] Type Y or nothing to reset all, n to stop.")
+					fmt.Println("[*] Press Y or just enter to remove all, n to stop.")
 					cmd.Run(cmd, args)
 				}
 			}
 			varFile, err := os.Create(varFile_path)
 			CheckErr(err)
 			defer varFile.Close()
-			fmt.Println("[+] Successfully reset")
+			fmt.Println("[+] removed")
 			return
 		}
 
@@ -135,6 +134,6 @@ var removevar = &cobra.Command{
 		}
 		err = WriteMap(new_varmap, varFile_path)
 		CheckErr(err)
-		fmt.Printf("[+] Successfully removed: %+v\n", removed_var)
+		fmt.Printf("[+] removed: %+v\n", removed_var)
 	},
 }
