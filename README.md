@@ -13,7 +13,7 @@ Here's a quick example usage.
 ![image](https://github.com/0xsuk/kop/blob/main/.github/example.png)  
 brief explanation:  
 - `kop ac`: `ac` stands for "add command".   
-Adding nmap command with IP variable.    
+Adding nmap command with IP variable ${IP}.  ${} is a variable notation.    
 - `kop av`: `av` stands for "add variable".    
 Setting IP variable to 10.11.12.13.
 - `kop sc`: `sc` stands for "search command".   
@@ -32,6 +32,11 @@ go install github.com/0xsuk/kop@latest
 ```
 
 # Usage
+Add a commands by `kop ac`. Use variable notation ${VARIABLE_NAME} to represent variables. The command will be added to ~/.kopcmd.json. 
+Add a variable by `kop av <variable> <value>`. The variable will be added to ~/.kopvar.json.  
+Copy a command by `kop cc <index>`. If the command contains variables found in ~/.kopvar.json, kop replace variables with its values.  
+
+
 ```
 Available Commands:
                  help [<command>]       help about any command
