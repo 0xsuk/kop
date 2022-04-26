@@ -21,7 +21,7 @@ Searching commands that contains string "nmap", and kop shows match and its inde
 - `kop cc`: `cc` stands for "copy command".   
 Copying a command at index 0, to my **system clipboard**.  
 
-and then the nmap command was copied to my clipboard, **replacing IP variable with its value.**  
+The nmap command was copied to my clipboard, **replacing IP variable with its value.**  
 You can paste the command, without typing loooong shell command again.
 
 Commands and variables added by `ac` and `av` remain in json files, so you don't have to type them again.  
@@ -58,3 +58,9 @@ Available Flags:
 
 CTF Life is so much better with kop!  
 ![image](https://github.com/0xsuk/kop/blob/main/.github/example2.png)  
+
+# TODO
+- [ ] Adding command with string id
+- [ ] Incremental Searching
+- [ ] Executing command with kop
+
