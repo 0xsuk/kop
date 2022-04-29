@@ -57,7 +57,7 @@ Available Flags:
 ```
 
 CTF Life is so much better with kop!  
-![image](https://github.com/0xsuk/kop/blob/main/.github/example2.png)  
+![image](https://github.com/0xsuk/kop/blob/main/.github/example3.png)  
 
 # TODO
 - [x] Adding command with string id
