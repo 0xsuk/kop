@@ -33,27 +33,29 @@ go install github.com/0xsuk/kop@latest
 ```
 
 # Usage
-- Add commands by `kop ac`. Use variable notation ${VARIABLE_NAME} to represent variables. The command will be added to ~/.kopcmd.json.  
+- Add commands by `kop ac [<key>]`. Use variable notation ${variable_name} to represent variables. If <key> is provided, the command will be added with provided string that can be used for `kop cc <key>`. All commands will be added to ~/.kopcmd.json.  
 - Add variables by `kop av <variable> <value>`. The variable will be added to ~/.kopvar.json.  
-- Copy commands by `kop cc <index>`. If the command contains variables found in ~/.kopvar.json, kop replace variables with its values.  
+- Copy commands by `kop cc <key>`. If the command contains variables found in ~/.kopvar.json, kop replace variables with its values. <key> is a string id that was set by `kop ac <key>`, or is an index of the command. To figure out what the index of the command is, use `kop sc [<search_query>]`. 
 
 
 ```
 Available Commands:
-                 help [<command>]       help about any command
-    [Variable]
-                 av <variable> <value>  add <variable> <value> pair
-                 cv <variable>          copy <variable>'s <value> to system clipboard
-                 rv <variable>...       remove variables. If no <variable> provided, remove all variables
-                 sv [<search_query>]    search variable that contains <search_query>. If no query provided, print all variables
-    [Command]
-                 ac                     add command
-                 cc <index>             copy command replacing <variable> with its <value>
-                 rc <index>...          remove commands specified by index
-                 sc [<search_query>]    search commands. If no query provided, print all commands
+         help [<command>]        help about any command
+
+   [Variable related]
+         av <variable> <value>   add <variable> <value> pair
+         cv <variable>           copy <variable>'s <value> to system clipboard
+         rv <variable>...        remove variables. If no <variable> provided, remove all variables
+         sv [<search_query>]     search variable that contains <search_query>. If no query provided, print all variables
+
+   [Command related]
+         ac [<key>]              add command with specified key. Key is optional
+         cc <key>                copy a command replacing <variable> with its <value>
+         rc <key>...             remove commands specified by keys
+         sc [<search_query>]     search commands. If no query, get all commands
 
 Available Flags:
-                 kop [<command>] -h     help about any command
+         kop [<command>] -h     help about any command
 ```
 
 CTF Life is so much better with kop!  
@@ -63,4 +65,5 @@ CTF Life is so much better with kop!
 - [x] Adding command with string id
 - [ ] Incremental Searching
 - [ ] Executing command with kop
+
 
