@@ -20,7 +20,7 @@ type Command struct {
 //addcmd adds strigns provided in arguments to cmdFile_path as a command
 var addcmd = &cobra.Command{
 	Use:   "ac [<key>]",
-	Short: "add command.",
+	Short: "add command with specified key. Key is optional",
 	Run: func(cmd *cobra.Command, args []string) {
 		commands, err := File2Commands(cmdFile_path)
 		if err != nil {
@@ -90,8 +90,8 @@ var searchcmd = &cobra.Command{
 
 //removecmd removes a command specified in argument.
 var removecmd = &cobra.Command{
-	Use:   "rc <index>...",
-	Short: "remove commands specified by index",
+	Use:   "rc <key>...",
+	Short: "remove commands specified by keys",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("Too few arnuments to call rc.")
@@ -115,7 +115,7 @@ var removecmd = &cobra.Command{
 			if err != nil {
 				id = Key2Id(commands, args[i])
 				if id == -1 {
-					defer fmt.Println("[-] No command has provided key:", args[i])
+					defer fmt.Println("[*] No command has provided key:", args[i])
 					continue
 				}
 			}
@@ -145,7 +145,7 @@ var removecmd = &cobra.Command{
 }
 
 var copycmd = &cobra.Command{
-	Use:   "cc [<key>]",
+	Use:   "cc <key>",
 	Short: "copy a command replacing <variable> with its <value>",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
