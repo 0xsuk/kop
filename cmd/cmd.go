@@ -18,9 +18,8 @@ type Commands struct {
 
 //addcmd adds strigns provided in arguments to cmdFile_path as a command
 var addcmd = &cobra.Command{
-	Use:   "ac",
-	Short: "add command",
-	Long:  "`kop ac` to add command. Type command you want to add to kop.",
+	Use:   "ac [<command_id>]",
+	Short: "add command. If no <command_id> is provided, kop generates id automatically",
 	Run: func(cmd *cobra.Command, args []string) {
 		commands, err := File2Commands(cmdFile_path)
 		CheckErr(err)
@@ -58,12 +57,12 @@ var searchcmd = &cobra.Command{
 			for i, v := range commands.Cmd {
 				fmt.Printf("%v: %v\n", i, v)
 			}
-		} else {
-			query := strings.Join(args, " ")
-			for i, v := range commands.Cmd {
-				if strings.Contains(v, query) {
-					fmt.Printf("%v: %v\n", i, v)
-				}
+			return
+		}
+		query := strings.Join(args, " ")
+		for i, v := range commands.Cmd {
+			if strings.Contains(v, query) {
+				fmt.Printf("%v: %v\n", i, v)
 			}
 		}
 	},
