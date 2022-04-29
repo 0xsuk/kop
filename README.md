@@ -60,7 +60,7 @@ CTF Life is so much better with kop!
 ![image](https://github.com/0xsuk/kop/blob/main/.github/example2.png)  
 
 # TODO
-- [ ] Adding command with string id
+- [x] Adding command with string id
 - [ ] Incremental Searching
 - [ ] Executing command with kop
 
