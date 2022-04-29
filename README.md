@@ -4,7 +4,7 @@ kop is a cli tool that I personally use for daily CTF.
 **Concept: Do not type same commands**
 <br/><br/><br/>
 If you are CTF player, you are probably typing same shell commands everyday, like `nmap <ipaddress>`, or `gobuster dir --url　http://<ipaddress>`... and so on.  
-The problem is that these commands slightly change every time, because of the "variable" factors, like IP address.
+The problem is that these commands slightly change every time because of the "variable" factors like IP address, so that just a simple shell alias does not lessen your job.  
 
 kop was made to address this problem. 
 
