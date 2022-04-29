@@ -90,8 +90,8 @@ var searchcmd = &cobra.Command{
 
 //removecmd removes a command specified in argument.
 var removecmd = &cobra.Command{
-	Use:   "rc <key>...",
-	Short: "remove commands specified by keys",
+	Use:   "rc <key|index>...",
+	Short: "remove commands specified by keys or ids",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("Too few arnuments to call rc.")
@@ -145,7 +145,7 @@ var removecmd = &cobra.Command{
 }
 
 var copycmd = &cobra.Command{
-	Use:   "cc <key>",
+	Use:   "cc <key|index>",
 	Short: "copy a command replacing <variable> with its <value>",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
