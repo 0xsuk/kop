@@ -14,6 +14,13 @@ import (
 
 type Commands struct {
 	Cmd []string `json:cmd,omitempty`
+//type Commands struct {
+//	Cmd []string `json:cmd,omitempty`
+//}
+
+type Command struct {
+	Key   string
+	Value string
 }
 
 //addcmd adds strigns provided in arguments to cmdFile_path as a command
