@@ -1,16 +1,17 @@
 # kop
 kop is a cli tool that I personally use for daily CTF. 
-
+<br/><br/><br/>
 **Concept: Do not type same commands**
-  
+<br/><br/><br/>
 If you are CTF player, you are probably typing same shell commands everyday, like `nmap <ipaddress>`, or `gobuster dir --url　http://<ipaddress>`... and so on.  
 The problem is that these commands slightly change every time, because of the "variable" factors, like IP address.
 
 kop was made to address this problem. 
 
-
+<br/><br/>
 Here's a quick example usage.  
-![image](https://github.com/0xsuk/kop/blob/main/.github/example1.png)  
+![image](https://github.com/0xsuk/kop/blob/main/.github/example1.png)    
+  
 brief explanation:  
 - `kop ac`: `ac` stands for "add command".   
 Adding nmap command with IP variable ${IP}.  ${} is a variable notation.    
@@ -33,10 +34,6 @@ go install github.com/0xsuk/kop@latest
 ```
 
 # Usage
-- Add commands by `kop ac [<key>]`. Use variable notation ${variable_name} to represent variables. If <key> is provided, the command will be added with provided string that can be used for `kop cc <key>`. All commands will be added to ~/.kopcmd.json.  
-- Add variables by `kop av <variable> <value>`. The variable will be added to ~/.kopvar.json.  
-- Copy commands by `kop cc <key>`. If the command contains variables found in ~/.kopvar.json, kop replace variables with its values. <key> is a string id that was set by `kop ac <key>`, or is an index of the command. To figure out what the index of the command is, use `kop sc [<search_query>]`. 
-
 
 ```
 Available Commands:
@@ -50,13 +47,20 @@ Available Commands:
 
    [Command related]
          ac [<key>]              add command with specified key. Key is optional
-         cc <key>                copy a command replacing <variable> with its <value>
-         rc <key>...             remove commands specified by keys
+         cc <key|index>          copy a command replacing <variable> with its <value>
+         rc <key|index>...       remove commands specified by keys or ids
          sc [<search_query>]     search commands. If no query, get all commands
 
 Available Flags:
          kop [<command>] -h     help about any command
 ```
+
+<details>
+<summary>Detail</summary>
+  <li> &lt;key&gt;: Key is a string id that can be used as an argument to specify a command.  </li>
+ <li> &lt;key|index&gt;: Key or Index. Index is an index of a command. All commands are assigned an index when added with `kop ac`, no matter &lt;key&gt; is provided or not. Check indexes of commands by `kop sc`.  
+  </li>
+</details>
 
 CTF Life is so much better with kop!  
 ![image](https://github.com/0xsuk/kop/blob/main/.github/example2.png)  
