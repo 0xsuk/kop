@@ -33,6 +33,8 @@ You must have `xclip` for Linux, `pbcopy` for OSX to make full use of kop.
 go install github.com/0xsuk/kop@latest
 ```
 
+Or install from [releases](https://github.com/0xsuk/kop/releases)
+
 # Usage
 
 ```
