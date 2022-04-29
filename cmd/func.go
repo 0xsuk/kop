@@ -11,12 +11,6 @@ import (
 	"strings"
 )
 
-func CheckErr(err error) {
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
 //File2Map reads filename which is expected to be exists, and return map of file
 func File2Map(filename string) (map[string]string, error) {
 	//TODO
@@ -33,16 +27,16 @@ func File2Map(filename string) (map[string]string, error) {
 	return varmap, nil
 }
 
-func File2Commands(filename string) (*Commands, error) {
+func File2Commands(filename string) ([]Command, error) {
 	f, _ := os.Open(filename)
 	defer f.Close()
 	bcommands, err := ioutil.ReadAll(f)
 	if err != nil {
 		return nil, err
 	}
-	commands := new(Commands)
+	commands := []Command{}
 	//if err, file is empty, in which case i just return initialized new(Commands)
-	json.Unmarshal(bcommands, commands)
+	json.Unmarshal(bcommands, &commands)
 	return commands, nil
 }
 
@@ -66,15 +60,15 @@ func WriteMap(contents map[string]string, filename string) error {
 	return nil
 }
 
-func WriteCommands(contents *Commands) error {
+func WriteCommands(commands []Command) error {
 	f, err := os.Create(cmdFile_path)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	bcontents, err := json.Marshal(contents)
-	_, err = f.Write(bcontents)
+	bcommands, err := json.Marshal(&commands)
+	_, err = f.Write(bcommands)
 	if err != nil {
 		return err
 	}
@@ -101,7 +95,7 @@ func Contains(slice interface{}, element interface{}) bool {
 	return false
 }
 
-func Copy(str string) string {
+func Copy(str string) {
 	//copy to clipboar
 	if _, err := exec.LookPath("pbcopy"); err == nil && runtime.GOOS == "darwin" {
 		//for MacOS
@@ -113,10 +107,13 @@ func Copy(str string) string {
 		execcmd := exec.Command("bash", "-c", echopy)
 		err = execcmd.Run()
 		//err during copy does not matter so much
+		//err during copy does not matter so much
 		if err != nil {
-			return "Failed to copy."
+			fmt.Println("[-] Failed to copy")
+			return
 		}
-		return "Copied"
+		fmt.Println("[+] Copied")
+		return
 	}
 	if _, err := exec.LookPath("xclip"); err == nil && runtime.GOOS == "linux" {
 		//for linux
@@ -128,24 +125,31 @@ func Copy(str string) string {
 		err = execcmd.Run()
 		//err during copy does not matter so much
 		if err != nil {
-			return "Failed to copy."
+			fmt.Println("[-] Failed to copy")
+			return
 		}
-		return "Copied"
+		fmt.Println("[+] Copied")
+		return
 	}
 
 	//if pbcopy and xclip was not found
-	return "[*] You should install pbcopy if you are Mac or xclip if you are Linux, to enable kop to have access to system clipboard"
+	fmt.Println("[-] Install pbcopy for OSX, xclip for Linux")
 }
 
-func FillVar(str, variable string) string {
-	if strings.Contains(str, "${"+variable+"}") {
-		varmap, err := File2Map(varFile_path)
-		CheckErr(err)
+func FillVar(varmap map[string]string, str, variable string) string {
+	if !strings.Contains(str, "${"+variable+"}") {
+		return str
+	}
+	str = strings.Replace(str, "${"+variable+"}", varmap[variable], -1)
+	return str
+}
 
-		if varmap[variable] != "" {
-			str = strings.Replace(str, "${"+variable+"}", varmap[variable], -1)
+//return -1 for error
+func Key2Id(commands []Command, key string) int {
+	for i, v := range commands {
+		if v.Key == key {
+			return i
 		}
 	}
-
-	return str
+	return -1
 }

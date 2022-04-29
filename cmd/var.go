@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -21,7 +22,9 @@ var searchvar = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		varmap, err := File2Map(varFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		var searchq string = ""
 		if len(args) == 1 {
@@ -35,7 +38,7 @@ var searchvar = &cobra.Command{
 				isfound = true
 			}
 		}
-		if !isfound {
+		if !isfound && searchq != "" {
 			fmt.Printf("Variable not found for search_query=%q\n", searchq)
 		}
 	},
@@ -46,25 +49,29 @@ var copyvar = &cobra.Command{
 	Short: "copy <variable>'s <value> to system clipboard",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			return errors.New("Please specify variable name")
+			return errors.New("Please specify a variable name")
 		}
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		searchvar := args[0]
 		varmap, err := File2Map(varFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		var isfound bool = false
 		for varname := range varmap {
 			if varname == searchvar {
 				isfound = true
 				fmt.Println(varname + ": " + varmap[varname])
-				fmt.Println(Copy(varmap[varname]))
+				Copy(varmap[varname])
+				return
 			}
 		}
 		if !isfound {
 			fmt.Printf("No variable found for variable=%q\n", searchvar)
+			return
 		}
 	},
 }
@@ -80,12 +87,16 @@ var addvar = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		varmap, err := File2Map(varFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		varmap[args[0]] = args[1]
 
 		err = WriteMap(varmap, varFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		fmt.Println("[+] Added")
 	},
@@ -96,7 +107,7 @@ var removevar = &cobra.Command{
 	Short: "remove variables. If no <variable> provided, remove all variables",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Printf("Are you sure you want to remove all variables?[Y/n]")
+			fmt.Print("Are you sure you want to remove all variables?[Y/n]")
 			scanner := bufio.NewScanner(os.Stdin)
 			if scanner.Scan() {
 				if scanner.Text() == "n" {
@@ -109,31 +120,36 @@ var removevar = &cobra.Command{
 				}
 			}
 			varFile, err := os.Create(varFile_path)
-			CheckErr(err)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
 			defer varFile.Close()
-			fmt.Println("[+] removed")
+			fmt.Println("[+] Removed All")
 			return
 		}
 
 		varmap, err := File2Map(varFile_path)
-		CheckErr(err)
-		new_varmap := map[string]string{}
+		if err != nil {
+			log.Fatalln(err)
+		}
+		newVarmap := map[string]string{}
 		var isfound bool = false
-		var removed_var string = ""
 		for varname := range varmap {
 			if !Contains(args, varname) {
-				new_varmap[varname] = varmap[varname]
+				newVarmap[varname] = varmap[varname]
 			} else {
 				isfound = true
-				removed_var = varname
+				fmt.Printf("[+] Removing %v: %v\n", varname, varmap[varname])
 			}
 		}
 		if !isfound {
 			fmt.Println("[*] Nothing removed")
 			return
 		}
-		err = WriteMap(new_varmap, varFile_path)
-		CheckErr(err)
-		fmt.Printf("[+] removed: %+v\n", removed_var)
+		err = WriteMap(newVarmap, varFile_path)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	},
 }

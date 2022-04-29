@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
@@ -18,15 +19,9 @@ var (
 //Read JsonFile and show
 var rootCmd = &cobra.Command{
 	Use:   "kop [command]",
-  Short: "Visit https://github.com/0xsuk/kop to understand basic usage&concepts",
+	Short: "Visit https://github.com/0xsuk/kop to understand basic usage&concepts",
 	Run: func(cmd *cobra.Command, args []string) {
-		varmap, err := File2Map(varFile_path)
-		CheckErr(err)
-
-		//iterate over jsonValue
-		for name, value := range varmap {
-			fmt.Printf("%v: %v\n", name, value)
-		}
+		searchvar.Run(searchvar, []string{})
 	},
 }
 
@@ -39,8 +34,8 @@ func Execute() {
 
 func init() {
 	configInit()
-  rootCmd.SetUsageFunc(func(cmd *cobra.Command) error {
-    fmt.Println(`Available Commands:
+	rootCmd.SetUsageFunc(func(cmd *cobra.Command) error {
+		fmt.Println(`Available Commands:
                  help [<command>]       help about any command
     [Variable]
                  av <variable> <value>  add <variable> <value> pair
@@ -56,11 +51,9 @@ func init() {
 Available Flags:
                  kop [<command>] -h     help about any command
                 `)
-    return nil
-  })
+		return nil
+	})
 	rootCmd.AddCommand(searchvar)
-  //searchvar.SetHelpFunc(func (*cobra.Command, []string) {})
-  searchvar.SetUsageFunc(func(*cobra.Command) error {return nil})
 	rootCmd.AddCommand(copyvar)
 	rootCmd.AddCommand(addvar)
 	rootCmd.AddCommand(removevar)
@@ -73,14 +66,18 @@ Available Flags:
 func configInit() {
 	if _, err := os.Stat(varFile_path); os.IsNotExist(err) {
 		f, err := os.Create(varFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 		defer f.Close()
 		fmt.Println("[+] Initialized ~/.kopvar.json")
 	}
 
 	if _, err := os.Stat(cmdFile_path); os.IsNotExist(err) {
 		f, err := os.Create(cmdFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 		defer f.Close()
 		fmt.Println("[+] Initialized ~/.kopcmd.json")
 	}

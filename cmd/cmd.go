@@ -12,12 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Commands struct {
-	Cmd []string `json:cmd,omitempty`
-//type Commands struct {
-//	Cmd []string `json:cmd,omitempty`
-//}
-
 type Command struct {
 	Key   string
 	Value string
@@ -25,29 +19,44 @@ type Command struct {
 
 //addcmd adds strigns provided in arguments to cmdFile_path as a command
 var addcmd = &cobra.Command{
-	Use:   "ac [<command_id>]",
-	Short: "add command. If no <command_id> is provided, kop generates id automatically",
+	Use:   "ac [<key>]",
+	Short: "add command.",
 	Run: func(cmd *cobra.Command, args []string) {
 		commands, err := File2Commands(cmdFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
-		var newcommand string = ""
-		fmt.Print("cmd: ")
+		newCommand := Command{}
+		//ifnore case args > 1
+		if len(args) > 0 {
+			_, err := strconv.Atoi(args[0])
+			//do not allow Number ID
+			if err == nil {
+				fmt.Println("[-] Cannot use an integer as a key")
+				return
+			}
+			newCommand.Key = args[0]
+		}
+
+		fmt.Print("[+] Type command: ")
 		scanner := bufio.NewScanner(os.Stdin)
 		if scanner.Scan() {
 			if scanner.Text() != "" {
-				newcommand = scanner.Text()
+				newCommand.Value = scanner.Text()
 			} else {
-				log.Fatal("cannot add empty command")
+				fmt.Println("[*] Aborting")
+				return
 			}
 		}
 		//fmt.Printf("Adding Command: %+v\n", newcommand)
-		commands.Cmd = append(commands.Cmd, newcommand)
+		commands = append(commands, newCommand)
 
 		err = WriteCommands(commands)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
-		fmt.Printf("[+] Added\n")
 	},
 }
 
@@ -58,18 +67,22 @@ var searchcmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		///unmarshaled json stored in
 		commands, err := File2Commands(cmdFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 		//if no query specified
 		if len(args) < 1 {
-			for i, v := range commands.Cmd {
-				fmt.Printf("%v: %v\n", i, v)
+			for i, v := range commands {
+				fmt.Printf("[%v] %v: %v\n", i, v.Key, v.Value)
 			}
 			return
 		}
+
+		//Accespt space-seperated args as a query
 		query := strings.Join(args, " ")
-		for i, v := range commands.Cmd {
-			if strings.Contains(v, query) {
-				fmt.Printf("%v: %v\n", i, v)
+		for i, v := range commands {
+			if strings.Contains(v.Value, query) {
+				fmt.Printf("[%v] %v: %v\n", i, v.Key, v.Value)
 			}
 		}
 	},
@@ -89,23 +102,34 @@ var removecmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		//Read and to commands
 		commands, err := File2Commands(cmdFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
-		//Do not initialize, because elements will be added later
-		new_commands := &Commands{}
-		removed_indexes := []int{}
+		//TODO: ?Do not initialize, because elements will be added later
+		newCommands := []Command{}
+		removingIndexes := []int{}
 		for i := 0; i < len(args); i++ {
-			iii, _ := strconv.Atoi(args[i])
-			removed_indexes = append(removed_indexes, iii)
+			id, err := strconv.Atoi(args[i])
+			//args[i] is a key
+			if err != nil {
+				id = Key2Id(commands, args[i])
+				if id == -1 {
+					defer fmt.Println("[-] No command has provided key:", args[i])
+					continue
+				}
+			}
+			removingIndexes = append(removingIndexes, id)
 		}
 		var isfound bool = false
-		var removed_cmd string = ""
-		for i, v := range commands.Cmd {
-			if !Contains(removed_indexes, i) {
-				new_commands.Cmd = append(new_commands.Cmd, v)
+		var removedCmds []Command
+		for i, v := range commands {
+			if !Contains(removingIndexes, i) {
+				newCommands = append(newCommands, v)
 			} else {
 				isfound = true
-				removed_cmd = v
+				removedCmds = append(removedCmds, v)
+				fmt.Printf("[+] Removing [%v] %v: %v\n", i, v.Key, v.Value)
 			}
 		}
 		if !isfound {
@@ -113,40 +137,51 @@ var removecmd = &cobra.Command{
 			return
 		}
 
-		err = WriteCommands(new_commands)
-		CheckErr(err)
-		fmt.Printf("[+] Removed: %+v\n", removed_cmd)
+		err = WriteCommands(newCommands)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	},
 }
 
 var copycmd = &cobra.Command{
-	Use:   "cc <index>",
-	Short: "copy command replacing <variable> with its <value>",
+	Use:   "cc [<key>]",
+	Short: "copy a command replacing <variable> with its <value>",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("Too few arguments to call cc")
-		} else if _, err := strconv.Atoi(args[0]); err != nil {
-			return errors.New("argument must be integer")
-		} else {
-			return nil
 		}
+		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		commands, err := File2Commands(cmdFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		varmap, err := File2Map(varFile_path)
-		CheckErr(err)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		//args[0] is filtered by Args func, so not produce err
-		used_cmd_index, _ := strconv.Atoi(args[0])
-		used_cmd := commands.Cmd[used_cmd_index]
+		//TODO
+		id, err := strconv.Atoi(args[0])
+		if err != nil {
+			id = Key2Id(commands, args[0])
+			if id == -1 {
+				fmt.Println("[-] No command has provided key:", args[0])
+				return
+			}
+		}
+		command := commands[id]
 
 		//Fills value to $VARNAME expression
-		for varname := range varmap {
-			used_cmd = FillVar(used_cmd, varname)
+		var out string
+		for variable := range varmap {
+			out = FillVar(varmap, command.Value, variable)
 		}
-		fmt.Println(used_cmd)
-		fmt.Println(Copy(used_cmd))
+		fmt.Println(out)
+		Copy(out)
 	},
 }
