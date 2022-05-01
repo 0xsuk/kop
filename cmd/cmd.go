@@ -177,7 +177,7 @@ var copycmd = &cobra.Command{
 		command := commands[id]
 
 		//Fills value to $VARNAME expression
-		var out string
+		out := command.Value
 		for variable := range varmap {
 			out = FillVar(varmap, command.Value, variable)
 		}
