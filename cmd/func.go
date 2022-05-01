@@ -138,6 +138,7 @@ func Copy(str string) {
 }
 
 func ExecuteCmd(command string) {
+	fmt.Println("[+] Executing:", command)
 	execcmd := exec.Command("bash", "-c", command)
 	stdin, _ := execcmd.StdinPipe()
 	stdout, _ := execcmd.StdoutPipe()
