@@ -50,6 +50,7 @@ Available Commands:
    [Command related]
          ac [<key>]              add command with specified key. Key is optional
          cc <key|index>          copy a command replacing <variable> with its <value>
+         ec <key|index>          execute a command replacing <variable> with its <value>
          rc <key|index>...       remove commands specified by keys or ids
          sc [<search_query>]     search commands. If no query, get all commands
 
@@ -69,7 +70,6 @@ CTF Life is so much better with kop!
 
 # TODO
 - [x] Adding command with string id
-- [ ] Incremental Searching
-- [ ] Executing command with kop
+- [x] Executing command with kop
 
 
