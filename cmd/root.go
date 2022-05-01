@@ -88,6 +88,7 @@ func init() {
 		fmt.Println("   [Command related]")
 		fmt.Println("         ac [<key>]              add command with specified key. Key is optional")
 		fmt.Println("         cc <key|index>          copy a command replacing <variable> with its <value>")
+		fmt.Println("         ec <key|index>          execute a command replacing <variable> with its <value>")
 		fmt.Println("         rc <key|index>...       remove commands specified by keys or ids")
 		fmt.Println("         sc [<search_query>]     search commands. If no query, get all commands")
 		fmt.Println("")
