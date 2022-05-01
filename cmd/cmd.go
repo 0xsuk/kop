@@ -187,9 +187,8 @@ var copycmd = &cobra.Command{
 }
 
 var execmd = &cobra.Command{
-	Use:     "ec <key|index>",
-	Short:   "execute a command replacing <variable> with its <value>",
-	Aliases: []string{"e"},
+	Use:   "ec <key|index>",
+	Short: "execute a command replacing <variable> with its <value>",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("Too few arguments to call cc")
