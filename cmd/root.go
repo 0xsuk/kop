@@ -42,6 +42,7 @@ func init() {
 	rootCmd.AddCommand(searchcmd)
 	rootCmd.AddCommand(removecmd)
 	rootCmd.AddCommand(copycmd)
+	rootCmd.AddCommand(execmd)
 
 	//For usage generation
 	//TODO: find a better way to generate organized help message

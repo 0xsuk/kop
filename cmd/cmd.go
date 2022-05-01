@@ -185,3 +185,42 @@ var copycmd = &cobra.Command{
 		Copy(out)
 	},
 }
+
+var execmd = &cobra.Command{
+	Use:   "ec <key|index>",
+	Short: "execute a command replacing <variable> with its <value>",
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return errors.New("Too few arguments to call cc")
+		}
+		return nil
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		commands, err := File2Commands(cmdFile_path)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		varmap, err := File2Map(varFile_path)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		id, err := strconv.Atoi(args[0])
+		if err != nil {
+			id = Key2Id(commands, args[0])
+			if id == -1 {
+				fmt.Println("[-] No command has provided key:", args[0])
+				return
+			}
+		}
+		command := commands[id]
+
+		//Fills value to $VARNAME expression
+		out := command.Value
+		for variable := range varmap {
+			out = FillVar(varmap, command.Value, variable)
+		}
+		ExecuteCmd(out)
+	},
+}

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -134,6 +135,43 @@ func Copy(str string) {
 
 	//if pbcopy and xclip was not found
 	fmt.Println("[-] Install pbcopy for OSX, xclip for Linux")
+}
+
+func ExecuteCmd(command string) {
+	execcmd := exec.Command("bash", "-c", command)
+	stdin, _ := execcmd.StdinPipe()
+	stdout, _ := execcmd.StdoutPipe()
+	stderr, _ := execcmd.StderrPipe()
+	err := execcmd.Start()
+	if err != nil {
+		fmt.Println("[-] Failed to execute command")
+		return
+	}
+	go func() {
+		defer stdin.Close()
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			io.WriteString(stdin, scanner.Text()+"\r\n")
+		}
+	}()
+	go func() {
+		defer stdout.Close()
+		scanner := bufio.NewReader(stdout)
+		for {
+			obyte, _ := scanner.ReadByte()
+			fmt.Print(string(obyte))
+		}
+	}()
+	go func() {
+		defer stderr.Close()
+		scanner := bufio.NewScanner(stderr)
+		for scanner.Scan() {
+			fmt.Fprintln(os.Stderr, scanner.Text())
+		}
+	}()
+	execcmd.Wait()
+	os.Exit(execcmd.ProcessState.ExitCode())
+
 }
 
 func FillVar(varmap map[string]string, str, variable string) string {
