@@ -43,6 +43,13 @@ func init() {
 	rootCmd.AddCommand(removecmd)
 	rootCmd.AddCommand(copycmd)
 	rootCmd.AddCommand(execmd)
+	for _, c := range rootCmd.Commands() {
+		c.SetUsageFunc(func(cmd *cobra.Command) error {
+			fmt.Println("Command:")
+			fmt.Println("         " + c.Use + "     " + c.Short)
+			return nil
+		})
+	}
 
 	//For usage generation
 	//TODO: find a better way to generate organized help message
