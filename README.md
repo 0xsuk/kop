@@ -71,5 +71,5 @@ CTF Life is so much better with kop!
 # TODO
 - [x] Adding command with string id
 - [x] Executing command with kop
-
+- [ ] Multiple sessions 
 
