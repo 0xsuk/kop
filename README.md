@@ -1,9 +1,10 @@
 # kop
-kop is a cli tool that I personally use for daily CTF. 
+kop is a cli tool that I personally use for daily CTF(Capture the flag). 
 <br/><br/><br/>
 **Concept: Do not type same commands**
 <br/><br/><br/>
-If you are CTF player, you are probably typing same shell commands everyday, like `nmap <IP address>`, or `gobuster dir --url　http://<IP address>`... and so on.  
+If you are CTF player, you are probably typing same shell commands everyday, like `nmap <IP address>`, or `gobuster dir -u http://<IP address> -w directory-list-2.3-medium.txt`... and so on.  
+You don't want to type these long command for every machine with different IP addresses, right?  
 The problem is that these commands slightly change every time because of the "variable" factors like IP address, so just a simple shell alias does not lessen your job.  
 
 kop was made to address this problem. 
